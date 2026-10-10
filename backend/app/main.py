@@ -1,9 +1,11 @@
 import os
 from contextlib import asynccontextmanager
 from datetime import date
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field
 
 from .data import FAQS, PRICING, TREATMENT_IDS, TREATMENTS
@@ -80,3 +82,15 @@ def create_booking(booking: BookingIn):
         )
         booking_id = cur.lastrowid
     return BookingOut(id=booking_id, **booking.model_dump())
+
+
+# Serve the built Angular site from the same server when it exists, so a single
+# process hosts both the website and the API. Mounted last so /api routes win.
+FRONTEND_DIST = Path(
+    os.environ.get(
+        "FRONTEND_DIST",
+        Path(__file__).resolve().parents[2] / "frontend" / "dist" / "frontend" / "browser",
+    )
+)
+if FRONTEND_DIST.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")

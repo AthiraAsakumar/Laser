@@ -20,7 +20,26 @@ Laser/
 - Python 3.11+
 - Node.js 22.12+ (Angular 21)
 
-## Run locally
+## Deploy locally (one command)
+
+Both options build the Angular site and serve it together with the API at
+**http://localhost:8000**.
+
+**Option A: Docker** (only needs [Docker Desktop](https://www.docker.com/products/docker-desktop/))
+
+```bash
+docker compose up -d --build     # start
+docker compose down              # stop (bookings are kept in the clinic-data volume)
+```
+
+**Option B: start script** (needs Python 3.11+ and Node.js 22.12+)
+
+```bash
+./start.sh        # macOS / Linux
+start.bat         # Windows
+```
+
+## Development mode (live reload)
 
 **1. Backend** (http://localhost:8000, API docs at http://localhost:8000/docs)
 
@@ -64,6 +83,7 @@ cd backend && pytest
 |------------------|-------------------------|---------------------------------|
 | `CLINIC_DB_PATH` | `backend/clinic.db`     | SQLite database file            |
 | `CORS_ORIGINS`   | `http://localhost:4200` | Comma-separated allowed origins |
+| `FRONTEND_DIST`  | `frontend/dist/frontend/browser` | Built Angular site served at `/` (if present) |
 
 ## Customising
 
